@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ulanyş - Admin</title>
+    <link rel="icon" type="image/png" href="./assets/app_icon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="adminOverlay" class="overlay">
+      <div class="login-card">
+        <h2 data-i18n="adminLoginTitle">Admin Login</h2>
+        <form id="adminForm" class="form-grid">
+          <label><span data-i18n="username">Username</span> <input id="adminUsernameInput" type="text" required /></label>
+          <label><span data-i18n="password">Password</span> <input id="adminPasswordInput" type="password" required /></label>
+          <button type="submit" data-i18n="loginButton">Login</button>
+        </form>
+        <p id="adminStatus" class="status"></p>
+      </div>
+    </div>
+
+    <div id="adminContent" class="hidden">
+      <header class="topbar">
+        <div class="topbar-left">
+          <a class="brand" href="./index.html">
+            <img src="./assets/logo.png" alt="Logo" width="200" height="48" style="height:40px; width:auto; max-width:260px;" />
+          </a>
+          <nav id="topNav" class="topnav"></nav>
+        </div>
+        <div class="topbar-actions">
+          <button id="logoutBtn" type="button" data-i18n="logout">Logout</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel">
+          <h2 data-i18n="adminBackendUrl">Backend URL</h2>
+          <p class="status" data-i18n="adminBackendUrlHelp">Manage the backend address used by this web app on this browser.</p>
+          <div class="form-grid with-action">
+            <label><span data-i18n="adminBackendUrl">Backend URL</span> <input id="backendUrlInput" type="text" /></label>
+            <button id="saveBackendUrlBtn" type="button" data-i18n="save">Save</button>
+          </div>
+          <p id="backendUrlStatus" class="status"></p>
+        </section>
+
+        <section class="panel">
+          <h2 data-i18n="users">Users</h2>
+          <form id="createUserForm" class="form-grid with-action">
+            <label><span data-i18n="username">Username</span> <input id="newUsernameInput" type="text" required /></label>
+            <label><span data-i18n="password">Password</span> <input id="newPasswordInput" type="password" required /></label>
+            <button type="submit" data-i18n="createUser">Create User</button>
+          </form>
+          <p id="createUserStatus" class="status"></p>
+
+          <div class="devices-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th data-i18n="username">Username</th>
+                  <th data-i18n="updated">Updated</th>
+                  <th class="actions-header no-break" data-i18n="actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersBody"></tbody>
+            </table>
+          </div>
+          <p id="usersStatus" class="status"></p>
+        </section>
+      </main>
+    </div>
+
+    <script src="./common.js"></script>
+    <script src="./admin.js"></script>
+  </body>
+</html>

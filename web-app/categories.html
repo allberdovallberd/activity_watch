@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ulanyş - Categories</title>
+    <link rel="icon" type="image/png" href="./assets/app_icon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="loginOverlay" class="overlay">
+      <div class="login-card">
+        <h2 data-i18n="loginTitle">Login</h2>
+        <form id="loginForm" class="form-grid">
+          <label><span data-i18n="username">Username</span> <input id="loginUsernameInput" type="text" required /></label>
+          <label><span data-i18n="password">Password</span> <input id="loginPasswordInput" type="password" required /></label>
+          <button type="submit" data-i18n="loginButton">Login</button>
+        </form>
+        <p id="loginStatus" class="status"></p>
+      </div>
+    </div>
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <a class="brand" href="./index.html">
+          <img src="./assets/logo.png" alt="Logo" width="200" height="48" style="height:40px; width:auto; max-width:260px;" />
+        </a>
+        <nav id="topNav" class="topnav"></nav>
+      </div>
+      <div class="topbar-actions">
+        <button id="logoutBtn" type="button" data-i18n="logout">Logout</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <h2 data-i18n="mainCategoryTitle">Main Category (Faculty)</h2>
+        <form id="mainCategoryForm" class="form-inline">
+          <label class="fixed-field"><span data-i18n="name">Name</span> <input id="mainCategoryNameInput" type="text" required /></label>
+          <button type="submit" class="action-btn" data-i18n="addMainCategory">Add Main Category</button>
+        </form>
+        <p id="mainStatus" class="status"></p>
+        <table>
+          <thead><tr><th data-i18n="name">Name</th><th class="actions-col" data-i18n="actions">Actions</th></tr></thead>
+          <tbody id="mainBody"></tbody>
+        </table>
+      </section>
+
+      <section class="panel">
+        <h2 data-i18n="subCategoryTitle">Sub Category (Year Intake)</h2>
+        <form id="subCategoryForm" class="form-grid">
+          <label><span data-i18n="mainCategoryTitle">Main Category (Faculty)</span> <select id="subMainSelect" required></select></label>
+          <div class="inline-field">
+            <label><span data-i18n="name">Name</span> <input id="subCategoryNameInput" type="text" required /></label>
+            <button type="submit" class="action-btn" data-i18n="addSubCategory">Add Sub Category</button>
+          </div>
+        </form>
+        <p id="subStatus" class="status"></p>
+        <table>
+          <thead><tr><th data-i18n="main">Main</th><th data-i18n="sub">Sub</th><th class="actions-col" data-i18n="actions">Actions</th></tr></thead>
+          <tbody id="subBody"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script src="./common.js"></script>
+    <script src="./categories.js"></script>
+  </body>
+</html>

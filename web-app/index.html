@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ulanyş - Dashboard</title>
+    <link rel="icon" type="image/png" href="./assets/app_icon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="loginOverlay" class="overlay">
+      <div class="login-card">
+        <h2 data-i18n="loginTitle">Login</h2>
+        <form id="loginForm" class="form-grid">
+          <label><span data-i18n="username">Username</span> <input id="loginUsernameInput" type="text" required /></label>
+          <label><span data-i18n="password">Password</span> <input id="loginPasswordInput" type="password" required /></label>
+          <button type="submit" data-i18n="loginButton">Login</button>
+        </form>
+        <p id="loginStatus" class="status"></p>
+      </div>
+    </div>
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <a class="brand" href="./index.html">
+          <img src="./assets/logo.png" alt="Logo" width="200" height="48" style="height:40px; width:auto; max-width:260px;" />
+        </a>
+        <nav id="topNav" class="topnav"></nav>
+      </div>
+      <div class="topbar-actions">
+        <button id="logoutBtn" type="button" data-i18n="logout">Logout</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="row-between">
+          <div>
+            <h2 data-i18n="dashboardDevicesTitle">Devices</h2>
+            <div id="devicesCount" class="section-count"></div>
+          </div>
+        </div>
+        <div class="filters">
+          <label><span data-i18n="searchDeviceId">Search Device ID</span> <input id="searchInput" type="text" placeholder="e.g. TAB001" data-i18n-placeholder="searchDeviceIdPlaceholder" /></label>
+          <label><span data-i18n="faculty">Faculty</span> <select id="mainFilter"></select></label>
+          <label><span data-i18n="yearIntake">Year Intake</span> <select id="subFilter"></select></label>
+        </div>
+        <div class="devices-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="table-checkbox"><input id="selectAllDashboardDevices" type="checkbox" /></th>
+                <th data-i18n="deviceId">Device ID</th>
+                <th data-i18n="ownerName">Owner Name</th>
+                <th data-i18n="faculty">Faculty</th>
+                <th data-i18n="year">Year</th>
+                <th data-i18n="lastSeen">Last Seen</th>
+                <th class="conn-col" data-i18n="connection">Connection</th>
+              </tr>
+            </thead>
+            <tbody id="devicesBody"></tbody>
+          </table>
+        </div>
+        <div id="paginationWrap"></div>
+      </section>
+
+      <section class="panel">
+        <h2 data-i18n="deviceDetails">Device Details</h2>
+        <div id="selectedDeviceWrap" class="hidden">
+          <p id="selectedDeviceLabel"></p>
+          <div class="range-row">
+            <label><span data-i18n="from">From</span>
+              <div class="date-picker-wrap">
+                <input id="fromDateDisplay" type="text" placeholder="dd/mm/yyyy" readonly />
+                <input id="fromDateInput" type="date" class="hidden-date-input" />
+              </div>
+            </label>
+            <label><span data-i18n="to">To</span>
+              <div class="date-picker-wrap">
+                <input id="toDateDisplay" type="text" placeholder="dd/mm/yyyy" readonly />
+                <input id="toDateInput" type="date" class="hidden-date-input" />
+              </div>
+            </label>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-title" id="screenTimeTitle" data-i18n="screenTime">Screen Time</div>
+              <div class="summary-value" id="screenTimeValue">0h 0m</div>
+              <div class="summary-sub" id="screenTimeRange"></div>
+            </div>
+            <div class="summary-card usage-chart-card">
+              <div class="summary-title" data-i18n="appUsage">App Usage</div>
+              <div id="usageChartEmpty" class="summary-sub" data-i18n="noAppUsageYet">No app usage yet.</div>
+              <div id="usageChartBody" class="usage-chart hidden"></div>
+            </div>
+          </div>
+          <div class="daily-usage">
+            <h4 data-i18n="dailyUsage">Daily Usage</h4>
+            <div class="daily-usage-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="date">Date</th>
+                    <th data-i18n="screenTime">Screen Time</th>
+                  </tr>
+                </thead>
+                <tbody id="dailyUsageBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="section-heading">
+            <h3 data-i18n="appUsage">App Usage</h3>
+            <div id="appsCount" class="section-count"></div>
+          </div>
+          <label class="inline-check app-usage-toggle">
+            <input id="includeSystemApps" type="checkbox" />
+            <span data-i18n="includeSystemApps">Include system apps too</span>
+          </label>
+          <table>
+            <thead>
+              <tr>
+                <th data-i18n="icon">Icon</th>
+                <th data-i18n="app">App</th>
+                <th data-i18n="package">Package</th>
+                <th data-i18n="screenTime">Screen Time</th>
+              </tr>
+            </thead>
+            <tbody id="appsBody"></tbody>
+          </table>
+        </div>
+        <p id="noDeviceSelected" data-i18n="selectDevicePrompt">Select a device from the list.</p>
+        <p id="detailsStatus" class="status"></p>
+      </section>
+    </main>
+
+    <div id="selectionBar" class="selection-bar hidden">
+      <span id="selectionBarText">0 devices selected</span>
+    </div>
+
+    <script src="./common.js"></script>
+    <script src="./dashboard.js"></script>
+  </body>
+</html>

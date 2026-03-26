@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ulanyş - Devices</title>
+    <link rel="icon" type="image/png" href="./assets/app_icon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="loginOverlay" class="overlay">
+      <div class="login-card">
+        <h2 data-i18n="loginTitle">Login</h2>
+        <form id="loginForm" class="form-grid">
+          <label><span data-i18n="username">Username</span> <input id="loginUsernameInput" type="text" required /></label>
+          <label><span data-i18n="password">Password</span> <input id="loginPasswordInput" type="password" required /></label>
+          <button type="submit" data-i18n="loginButton">Login</button>
+        </form>
+        <p id="loginStatus" class="status"></p>
+      </div>
+    </div>
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <a class="brand" href="./index.html">
+          <img src="./assets/logo.png" alt="Logo" width="200" height="48" style="height:40px; width:auto; max-width:260px;" />
+        </a>
+        <nav id="topNav" class="topnav"></nav>
+      </div>
+      <div class="topbar-actions">
+        <button id="logoutBtn" type="button" data-i18n="logout">Logout</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <h2 data-i18n="createEditDevice">Create / Edit Device</h2>
+        <form id="deviceForm" class="form-grid with-action">
+          <label><span data-i18n="deviceId">Device ID</span> <input id="deviceIdInput" type="text" required /></label>
+          <label><span data-i18n="faculty">Faculty</span> <select id="deviceMainSelect" required></select></label>
+          <label><span data-i18n="yearIntake">Year Intake</span> <select id="deviceSubSelect" required></select></label>
+          <button id="deviceSubmitBtn" type="submit" data-i18n="addDevice">Add Device</button>
+        </form>
+        <p id="deviceStatus" class="status"></p>
+      </section>
+
+      <section class="panel">
+        <div class="row-between">
+          <div>
+            <h2 data-i18n="dashboardDevicesTitle">Devices</h2>
+            <div id="devicesCount" class="section-count"></div>
+          </div>
+        </div>
+        <div class="filters">
+          <label><span data-i18n="searchDeviceId">Search Device ID</span> <input id="searchInput" type="text" data-i18n-placeholder="searchDeviceIdPlaceholder" /></label>
+          <label><span data-i18n="faculty">Faculty</span> <select id="mainFilter"></select></label>
+          <label><span data-i18n="yearIntake">Year Intake</span> <select id="subFilter"></select></label>
+        </div>
+        <div class="devices-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="table-checkbox"><input id="selectAllDevices" type="checkbox" /></th>
+                <th data-i18n="deviceId">Device ID</th>
+                <th data-i18n="ownerName">Owner Name</th>
+                <th data-i18n="faculty">Faculty</th>
+                <th data-i18n="year">Year</th>
+                <th data-i18n="lastSeen">Last Seen</th>
+                <th class="conn-col" data-i18n="connection">Connection</th>
+                <th class="actions-header no-break" data-i18n="actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="devicesBody"></tbody>
+          </table>
+        </div>
+        <div id="paginationWrap"></div>
+        <p id="devicesListStatus" class="status"></p>
+      </section>
+    </main>
+
+    <div id="selectionBar" class="selection-bar hidden">
+      <span id="selectionBarText">0 devices selected</span>
+    </div>
+
+    <script src="./common.js"></script>
+    <script src="./devices.js"></script>
+  </body>
+</html>

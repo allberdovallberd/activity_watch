@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ulanyş - Export</title>
+    <link rel="icon" type="image/png" href="./assets/app_icon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="loginOverlay" class="overlay">
+      <div class="login-card">
+        <h2 data-i18n="loginTitle">Login</h2>
+        <form id="loginForm" class="form-grid">
+          <label><span data-i18n="username">Username</span> <input id="loginUsernameInput" type="text" required /></label>
+          <label><span data-i18n="password">Password</span> <input id="loginPasswordInput" type="password" required /></label>
+          <button type="submit" data-i18n="loginButton">Login</button>
+        </form>
+        <p id="loginStatus" class="status"></p>
+      </div>
+    </div>
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <a class="brand" href="./index.html">
+          <img src="./assets/logo.png" alt="Logo" width="200" height="48" style="height:40px; width:auto; max-width:260px;" />
+        </a>
+        <nav id="topNav" class="topnav"></nav>
+      </div>
+      <div class="topbar-actions">
+        <button id="logoutBtn" type="button" data-i18n="logout">Logout</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <h2 data-i18n="exportUsageData">Export Usage Data</h2>
+        <p class="status export-help">
+          <span data-i18n="exportHelp">Export usage data by faculty and year intake as an Excel file.</span>
+        </p>
+        <form id="exportForm" class="export-form">
+          <label><span data-i18n="from">From</span>
+            <div class="date-picker-wrap">
+              <input id="fromDateDisplay" type="text" placeholder="dd/mm/yyyy" readonly />
+              <input id="fromDateInput" type="date" class="hidden-date-input" />
+            </div>
+          </label>
+          <label><span data-i18n="to">To</span>
+            <div class="date-picker-wrap">
+              <input id="toDateDisplay" type="text" placeholder="dd/mm/yyyy" readonly />
+              <input id="toDateInput" type="date" class="hidden-date-input" />
+            </div>
+          </label>
+          <label><span data-i18n="faculty">Faculty</span>
+            <select id="mainFilter" required></select>
+          </label>
+          <label><span data-i18n="yearIntake">Year Intake</span>
+            <select id="subFilter" required></select>
+          </label>
+          <button id="exportBtn" type="submit" data-i18n="export">Export</button>
+        </form>
+        <p id="exportStatus" class="status"></p>
+      </section>
+    </main>
+
+    <script src="./common.js"></script>
+    <script src="./export.js"></script>
+  </body>
+</html>

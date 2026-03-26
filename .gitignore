@@ -1,0 +1,6 @@
+backend/__pycache__/
+backend/*.pyc
+backend/usage.db
+.gradle/
+.vscode/
+android-app/
