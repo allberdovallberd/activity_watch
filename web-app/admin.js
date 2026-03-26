@@ -17,6 +17,7 @@ const logoutBtn = document.getElementById("logoutBtn");
 
 const adminState = {
   token: "",
+  username: "",
 };
 
 const userEditModal = createUserEditModal();
@@ -30,6 +31,7 @@ if (logoutBtn) {
       return;
     }
     adminState.token = "";
+    adminState.username = "";
     openAdminOverlay();
   });
 }
@@ -59,6 +61,7 @@ adminForm.addEventListener("submit", async (event) => {
       }),
     });
     adminState.token = payload.token;
+    adminState.username = adminUsernameInput.value.trim();
     adminPasswordInput.value = "";
     adminStatus.textContent = "";
     adminOverlay.classList.add("hidden");
@@ -123,12 +126,25 @@ async function loadUsers() {
 }
 
 function renderUsers(users) {
-  if (!users.length) {
+  const visibleUsers = (users || []).filter((user) => {
+    const username = String(user?.username || "").trim().toLowerCase();
+    if (!username) {
+      return false;
+    }
+    if (username === "admin") {
+      return false;
+    }
+    if (adminState.username && username === adminState.username.trim().toLowerCase()) {
+      return false;
+    }
+    return true;
+  });
+  if (!visibleUsers.length) {
     usersBody.innerHTML = `<tr><td colspan="3">${escapeHtml(t("noUsersFound"))}</td></tr>`;
     return;
   }
   usersBody.innerHTML = "";
-  users.forEach((user) => {
+  visibleUsers.forEach((user) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${escapeHtml(user.username || "")}</td>
