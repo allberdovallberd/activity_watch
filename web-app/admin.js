@@ -151,7 +151,7 @@ function renderUsers(users) {
       <td>${escapeHtml(formatTurkmenTime(user.updated_at))}</td>
       <td class="actions-col">
         <button type="button" class="edit-user-btn">${escapeHtml(t("edit"))}</button>
-        <button type="button" class="delete-user-btn">${escapeHtml(t("delete"))}</button>
+        <button type="button" class="danger delete-user-btn">${escapeHtml(t("delete"))}</button>
       </td>
     `;
     tr.querySelector(".edit-user-btn").addEventListener("click", () => openUserEditModal(user));
