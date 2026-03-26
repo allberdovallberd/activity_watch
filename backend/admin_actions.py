@@ -171,14 +171,20 @@ def handle_admin_login(
     *,
     write_json: WriteJson,
     db_connect: DbConnect,
-    admin_username: str,
-    admin_password: str,
     admin_token_hours: int,
     utc_now_iso: UtcNowIso,
 ) -> None:
     username = str(data.get("username", "")).strip()
     password = str(data.get("password", "")).strip()
-    if username != admin_username or password != admin_password:
+    conn = db_connect()
+    try:
+        admin = get_admin_credentials(conn)
+    finally:
+        conn.close()
+    if not admin:
+        return write_json(503, {"error": "Admin credentials are not initialized"})
+    expected_hash = hash_password(password, admin["salt"])
+    if username != admin["username"] or expected_hash != admin["password_hash"]:
         return write_json(401, {"error": "Invalid credentials"})
     token = secrets.token_urlsafe(32)
     expires_at = datetime.now(timezone.utc) + timedelta(hours=admin_token_hours)

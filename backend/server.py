@@ -54,10 +54,10 @@ DB_DSN = os.getenv("USAGE_DB_DSN") or os.getenv("DATABASE_URL")
 HOST = os.getenv("USAGE_SERVER_HOST", "0.0.0.0")
 PORT = int(os.getenv("USAGE_SERVER_PORT", "8080"))
 ADMIN_TOKEN_HOURS = int(os.getenv("USAGE_ADMIN_TOKEN_HOURS", "12"))
-ADMIN_PANEL_USERNAME = os.getenv("USAGE_ADMIN_USERNAME", "admin").strip() or "admin"
-ADMIN_PANEL_PASSWORD = os.getenv("USAGE_ADMIN_PASSWORD", "Pw2709!").strip() or "Pw2709!"
-DEFAULT_WEB_USERNAME = os.getenv("USAGE_DEFAULT_WEB_USERNAME", "admin").strip() or "admin"
-DEFAULT_WEB_PASSWORD = os.getenv("USAGE_DEFAULT_WEB_PASSWORD", "Pw2709!").strip() or "Pw2709!"
+ADMIN_PANEL_USERNAME = os.getenv("USAGE_ADMIN_USERNAME", "").strip()
+ADMIN_PANEL_PASSWORD = os.getenv("USAGE_ADMIN_PASSWORD", "").strip()
+DEFAULT_WEB_USERNAME = os.getenv("USAGE_DEFAULT_WEB_USERNAME", "").strip()
+DEFAULT_WEB_PASSWORD = os.getenv("USAGE_DEFAULT_WEB_PASSWORD", "").strip()
 DB_POOL_MIN_SIZE = max(1, int(os.getenv("USAGE_DB_POOL_MIN_SIZE", "4")))
 DB_POOL_MAX_SIZE = max(DB_POOL_MIN_SIZE, int(os.getenv("USAGE_DB_POOL_MAX_SIZE", "24")))
 RETENTION_DAYS = 62
@@ -192,6 +192,13 @@ SYSTEM_STYLE_NAME_KEYWORDS = (
 
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _validate_bootstrap_pair(name: str, username: str, password: str) -> None:
+    if bool(username) != bool(password):
+        raise RuntimeError(
+            f"{name} bootstrap requires both username and password to be set, or both left empty"
+        )
 
 
 def _json_default(value: Any) -> Any:
@@ -396,6 +403,8 @@ def db_connect() -> _PooledConnection:
 
 
 def init_db() -> None:
+    _validate_bootstrap_pair("Admin", ADMIN_PANEL_USERNAME, ADMIN_PANEL_PASSWORD)
+    _validate_bootstrap_pair("Default web user", DEFAULT_WEB_USERNAME, DEFAULT_WEB_PASSWORD)
     conn = db_connect()
     try:
         conn.execute(
@@ -694,9 +703,21 @@ def init_db() -> None:
             """
         )
         conn.execute("ALTER TABLE admin_tokens ADD COLUMN IF NOT EXISTS token_type TEXT NOT NULL DEFAULT 'admin'")
-        ensure_admin_credentials(conn, username=ADMIN_PANEL_USERNAME, password=ADMIN_PANEL_PASSWORD, utc_now_iso=utc_now_iso)
-        ensure_default_web_user(conn, username=DEFAULT_WEB_USERNAME, password=DEFAULT_WEB_PASSWORD, utc_now_iso=utc_now_iso)
         ensure_admin_settings(conn, utc_now_iso=utc_now_iso)
+        if ADMIN_PANEL_USERNAME and ADMIN_PANEL_PASSWORD:
+            ensure_admin_credentials(
+                conn,
+                username=ADMIN_PANEL_USERNAME,
+                password=ADMIN_PANEL_PASSWORD,
+                utc_now_iso=utc_now_iso,
+            )
+        if DEFAULT_WEB_USERNAME and DEFAULT_WEB_PASSWORD:
+            ensure_default_web_user(
+                conn,
+                username=DEFAULT_WEB_USERNAME,
+                password=DEFAULT_WEB_PASSWORD,
+                utc_now_iso=utc_now_iso,
+            )
         conn.commit()
     finally:
         conn.close()
@@ -1098,8 +1119,6 @@ class ApiHandler(BaseHTTPRequestHandler):
             data,
             write_json=self._write_json,
             db_connect=db_connect,
-            admin_username=ADMIN_PANEL_USERNAME,
-            admin_password=ADMIN_PANEL_PASSWORD,
             admin_token_hours=ADMIN_TOKEN_HOURS,
             utc_now_iso=utc_now_iso,
         )

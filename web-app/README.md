@@ -1,28 +1,16 @@
 # Web App
 
-## Run
+See the repository root `README.md` for the full installation and deployment guide.
+
+Quick notes:
+
+- simple local hosting:
 
 ```bash
 cd web-app
-python -m http.server 5173
+python3 -m http.server 5173 --bind 0.0.0.0
 ```
 
-Open: `http://localhost:5173`
-
-## Features
-
-- Admin login
-- Multi-page UI:
-  - Dashboard: `index.html`
-  - Categories: `categories.html`
-  - Devices: `devices.html`
-- Dashboard:
-  - device list with search + Faculty + Year filters
-  - pagination (50 per page)
-- Categories page:
-  - Main category (Faculty) CRUD
-  - Sub category (Year intake) CRUD
-- Devices page:
-  - device create/edit/delete
-  - search + Faculty + Year filters
-  - pagination (50 per page)
+- production hosting on Linux is better with nginx
+- backend URL default is defined in `web-app/common.js`
+- the browser can also store an overridden backend URL in local storage

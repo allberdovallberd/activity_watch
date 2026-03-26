@@ -1,36 +1,30 @@
 # Backend
 
-## Run
+See the repository root `README.md` for the full installation and deployment guide.
 
-```powershell
-cd backend
-pip install -r requirements.txt
-setx USAGE_DB_DSN "postgresql://usage_user:usage_pass@localhost:5432/usage_db"
-python server.py
+Quick notes:
+
+- backend uses PostgreSQL
+- runtime configuration comes from environment variables or `backend/.env`
+- initial admin bootstrap is environment-driven:
+  - `USAGE_ADMIN_USERNAME`
+  - `USAGE_ADMIN_PASSWORD`
+- after bootstrap, admin login is validated against the database
+
+Sample config:
+
+```bash
+USAGE_DB_DSN=postgresql://usage_user:usage_pass@localhost:5432/usage_db
+USAGE_SERVER_HOST=0.0.0.0
+USAGE_SERVER_PORT=8080
+USAGE_ADMIN_USERNAME=admin
+USAGE_ADMIN_PASSWORD=change-me
 ```
 
-Ensure the database exists before starting the server.
+Run manually:
 
-## Admin auth env
-
-- `USAGE_ADMIN_USERNAME` (default `admin`)
-- `USAGE_ADMIN_PASSWORD` (default `admin123`)
-- `USAGE_DB_DSN` or `DATABASE_URL` (PostgreSQL connection string)
-
-## Key API
-
-- `POST /api/v1/admin/login`
-- `GET/POST/PUT/DELETE /api/v1/main-categories[...]`
-- `GET/POST/PUT/DELETE /api/v1/sub-categories[...]`
-- `GET /api/v1/devices`
-- `POST /api/v1/devices` (create)
-- `PUT /api/v1/devices/{device_id}` (edit ID/category)
-- `DELETE /api/v1/devices/{device_id}` (delete/disable)
-- `POST /api/v1/devices/register` (APK)
-- `POST /api/v1/sync` (APK)
-
-## Device binding behavior
-
-- APK sends `device_id` + `client_instance_id`.
-- One device ID can be active on one physical installation at a time.
-- If admin deletes/reuses an ID, previously bound old installation is blocked.
+```bash
+cd backend
+source .venv/bin/activate
+python server.py
+```
