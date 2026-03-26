@@ -366,3 +366,23 @@ def handle_update_web_user(
         return write_json(200, {"ok": True, "username": next_username})
     finally:
         conn.close()
+
+
+def handle_delete_web_user(
+    username: str,
+    *,
+    write_json: WriteJson,
+    db_connect: DbConnect,
+) -> None:
+    username = str(username or "").strip()
+    if not username:
+        raise ValueError("Missing required field: username")
+    conn = db_connect()
+    try:
+        if not get_web_user(conn, username):
+            raise ValueError("User not found")
+        conn.execute("DELETE FROM web_users WHERE username = %s", (username,))
+        conn.commit()
+        return write_json(200, {"ok": True, "username": username})
+    finally:
+        conn.close()

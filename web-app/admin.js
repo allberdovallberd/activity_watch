@@ -133,9 +133,13 @@ function renderUsers(users) {
     tr.innerHTML = `
       <td>${escapeHtml(user.username || "")}</td>
       <td>${escapeHtml(formatTurkmenTime(user.updated_at))}</td>
-      <td class="actions-col"><button type="button" class="edit-user-btn">${escapeHtml(t("edit"))}</button></td>
+      <td class="actions-col">
+        <button type="button" class="edit-user-btn">${escapeHtml(t("edit"))}</button>
+        <button type="button" class="delete-user-btn">${escapeHtml(t("delete"))}</button>
+      </td>
     `;
     tr.querySelector(".edit-user-btn").addEventListener("click", () => openUserEditModal(user));
+    tr.querySelector(".delete-user-btn").addEventListener("click", () => deleteUser(user));
     usersBody.appendChild(tr);
   });
 }
@@ -232,6 +236,31 @@ async function submitUserEditModal() {
     await loadUsers();
   } catch (err) {
     userEditModal.status.textContent = t("passwordUpdateFailed", { message: err.message });
+  }
+}
+
+async function deleteUser(user) {
+  const username = String(user?.username || "").trim();
+  if (!username) {
+    return;
+  }
+  const confirmed = await confirmDialog(
+    t("deleteUserConfirm", { username }),
+    t("confirm"),
+    t("cancel"),
+  );
+  if (!confirmed) {
+    return;
+  }
+  usersStatus.textContent = t("deleting");
+  try {
+    await adminApi(`/api/v1/users/${encodeURIComponent(username)}`, {
+      method: "DELETE",
+    });
+    usersStatus.textContent = t("userDeleted", { username });
+    await loadUsers();
+  } catch (err) {
+    usersStatus.textContent = t("userDeleteFailed", { message: err.message });
   }
 }
 

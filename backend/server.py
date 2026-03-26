@@ -20,6 +20,7 @@ from admin_actions import (
     handle_admin_login,
     handle_admin_set_credentials,
     handle_create_web_user,
+    handle_delete_web_user,
     handle_get_web_users,
     handle_update_web_user_password,
     handle_update_web_user,
@@ -1105,6 +1106,9 @@ class ApiHandler(BaseHTTPRequestHandler):
             if path.startswith("/api/v1/sub-categories/"):
                 sub_id = int(path.rsplit("/", 1)[1])
                 return self._delete_sub_category(sub_id)
+            if path.startswith("/api/v1/users/"):
+                username = path.split("/")[4]
+                return self._delete_web_user(username)
             if path.startswith("/api/v1/devices/"):
                 device_id = path.rsplit("/", 1)[1]
                 return self._delete_device(device_id)
@@ -1178,6 +1182,13 @@ class ApiHandler(BaseHTTPRequestHandler):
             write_json=self._write_json,
             db_connect=db_connect,
             utc_now_iso=utc_now_iso,
+        )
+
+    def _delete_web_user(self, username: str) -> None:
+        return handle_delete_web_user(
+            username,
+            write_json=self._write_json,
+            db_connect=db_connect,
         )
 
     def _get_main_categories(self) -> None:

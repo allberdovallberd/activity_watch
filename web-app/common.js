@@ -174,6 +174,9 @@ const UI_STRINGS = {
     passwordUpdateFailed: "Açar söz täzelenmedi: {message}",
     adminAuthenticationRequired: "Admin tassyklamasy zerur",
     saveUserChangesConfirm: "{username} üçin täze açar söz ýatda saklansynmy?",
+    userDeleted: "{username} ulanyjy pozuldy.",
+    userDeleteFailed: "Ulanyjy pozulmady: {message}",
+    deleteUserConfirm: "{username} ulanyjyny pozmalymy?",
   },
   en: {
     appName: "Ulanyş",
@@ -338,6 +341,9 @@ const UI_STRINGS = {
     passwordUpdateFailed: "Password update failed: {message}",
     adminAuthenticationRequired: "Admin authentication required",
     saveUserChangesConfirm: "Save the new password for {username}?",
+    userDeleted: "User {username} deleted.",
+    userDeleteFailed: "User delete failed: {message}",
+    deleteUserConfirm: "Delete user {username}?",
   },
   ru: {
     appName: "Ulanyş",
@@ -502,6 +508,9 @@ const UI_STRINGS = {
     passwordUpdateFailed: "Ошибка обновления пароля: {message}",
     adminAuthenticationRequired: "Требуется аутентификация администратора",
     saveUserChangesConfirm: "Сохранить новый пароль для {username}?",
+    userDeleted: "Пользователь {username} удален.",
+    userDeleteFailed: "Не удалось удалить пользователя: {message}",
+    deleteUserConfirm: "Удалить пользователя {username}?",
   },
 };
 
