@@ -3,4 +3,5 @@ backend/*.pyc
 backend/usage.db
 .gradle/
 .vscode/
-android-app/
+android-app/.gradle-cache/
+android-app/android/build/
