@@ -4,9 +4,9 @@ This repository contains:
 
 - `backend/` — Python API server with PostgreSQL storage
 - `web-app/` — browser dashboard and admin pages
-- `android-app/` — Android collector app (not pushed to GitHub in the current repo setup)
+- `android-app/` — Android collector app (Flutter)
 
-This README covers installing and running the `backend/` and `web-app/` on another machine.
+This README covers installing and running the full stack on another machine. Android-specific build and device steps are also summarized here, and `android-app/README.md` contains the focused Android guide.
 
 ## What You Need
 
@@ -322,6 +322,85 @@ or, with nginx:
 ```bash
 curl http://127.0.0.1
 ```
+
+## Android App Setup
+
+### What the Android app expects
+
+- the backend must already be running and reachable
+- the app uses one active backend URL at a time
+- the backend URL is editable from app settings
+- the latest saved backend URL is the only sync target
+- there is no fallback and no auto-switch to another server
+
+Code references:
+
+- default first-run backend value: `android-app/lib/src/app_config.dart`
+- runtime settings storage: `android-app/lib/src/settings_store.dart`
+- sync behavior: `android-app/lib/src/sync_service.dart`
+
+### Build Android APK
+
+```bash
+cd android-app
+flutter pub get
+flutter build apk --release
+```
+
+Output:
+
+- `android-app/build/app/outputs/flutter-apk/app-release.apk`
+
+### Version bump before distributing an update
+
+If you want Android or MDM to treat the APK as a newer version, update:
+
+- `android-app/pubspec.yaml`
+
+Example:
+
+```yaml
+version: 1.0.1+2
+```
+
+Rules:
+
+- the number after `+` must always increase
+- the visible version on the left can be changed as needed
+
+### Install manually with adb
+
+```bash
+adb devices
+adb install -r android-app/build/app/outputs/flutter-apk/app-release.apk
+```
+
+If a normal replace fails:
+
+```bash
+adb uninstall com.example.usage_collector
+adb install android-app/build/app/outputs/flutter-apk/app-release.apk
+```
+
+### First device setup
+
+1. Install the APK on the tablet.
+2. Open the app.
+3. Grant Usage Access.
+4. Open settings and verify the backend URL.
+5. Enter the correct `device_id` from the web app.
+6. Confirm the backend can be reached.
+
+### Editing backend URL later
+
+The backend URL can be changed from the Android app settings as many times as needed.
+
+Current behavior:
+
+- the saved settings value is the active sync target
+- background sync uses the latest saved value
+- the app does not fall back to any old IP automatically
+- `AppConfig.defaultBackendBaseUrl` is only the first-run default
 
 ## Updating on the Server
 

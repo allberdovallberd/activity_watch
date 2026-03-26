@@ -20,19 +20,20 @@
       </div>
     </div>
 
-    <header class="topbar">
-      <div class="topbar-left">
-        <a class="brand" href="./index.html">
-          <img src="./assets/logo.png" alt="Logo" width="200" height="48" style="height:40px; width:auto; max-width:260px;" />
-        </a>
-        <nav id="topNav" class="topnav"></nav>
-      </div>
-      <div class="topbar-actions">
-        <button id="logoutBtn" type="button" data-i18n="logout">Logout</button>
-      </div>
-    </header>
+    <div id="authContent" class="hidden">
+      <header class="topbar">
+        <div class="topbar-left">
+          <a class="brand" href="./index.html">
+            <img src="./assets/logo.png" alt="Logo" width="200" height="48" style="height:40px; width:auto; max-width:260px;" />
+          </a>
+          <nav id="topNav" class="topnav"></nav>
+        </div>
+        <div class="topbar-actions">
+          <button id="logoutBtn" type="button" data-i18n="logout">Logout</button>
+        </div>
+      </header>
 
-    <main class="layout">
+      <main class="layout">
       <section class="panel">
         <h2 data-i18n="createEditDevice">Create / Edit Device</h2>
         <form id="deviceForm" class="form-grid with-action">
@@ -76,10 +77,11 @@
         <div id="paginationWrap"></div>
         <p id="devicesListStatus" class="status"></p>
       </section>
-    </main>
+      </main>
 
-    <div id="selectionBar" class="selection-bar hidden">
-      <span id="selectionBarText">0 devices selected</span>
+      <div id="selectionBar" class="selection-bar hidden">
+        <span id="selectionBarText">0 devices selected</span>
+      </div>
     </div>
 
     <script src="./common.js"></script>

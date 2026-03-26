@@ -1066,6 +1066,8 @@ class ApiHandler(BaseHTTPRequestHandler):
                 return self._write_json(401, {"error": "Unauthorized"})
             if self._is_admin_only_route("PUT", path) and not self._is_admin_authorized():
                 return self._write_json(401, {"error": "Unauthorized"})
+            if path == "/api/v1/admin/credentials":
+                return self._admin_set_credentials(self._read_json())
             if path.startswith("/api/v1/main-categories/"):
                 category_id = int(path.rsplit("/", 1)[1])
                 return self._update_main_category(category_id, self._read_json())

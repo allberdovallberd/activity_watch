@@ -17,6 +17,8 @@ const logoutBtn = document.getElementById("logoutBtn");
 
 const adminState = {
   token: "",
+  username: "",
+  updatedAt: "",
 };
 
 const userEditModal = createUserEditModal();
@@ -47,6 +49,8 @@ adminForm.addEventListener("submit", async (event) => {
       }),
     });
     adminState.token = payload.token;
+    adminState.username = payload.username || adminUsernameInput.value.trim();
+    adminState.updatedAt = payload.updated_at || "";
     adminPasswordInput.value = "";
     adminStatus.textContent = "";
     adminOverlay.classList.add("hidden");
@@ -85,15 +89,15 @@ createUserForm.addEventListener("submit", async (event) => {
   }
 });
 
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    adminState.token = "";
-    openAdminOverlay();
-  });
-}
+window.handleAdminLogout = () => {
+  adminState.token = "";
+  adminState.username = "";
+  adminState.updatedAt = "";
+  openAdminOverlay();
+};
 
-function openAdminOverlay() {
-  adminStatus.textContent = "";
+function openAdminOverlay(statusMessage = "") {
+  adminStatus.textContent = statusMessage;
   adminPasswordInput.value = "";
   setAdminContentVisible(false);
   adminOverlay.classList.remove("hidden");
@@ -118,15 +122,32 @@ async function loadUsers() {
 }
 
 function renderUsers(users) {
-  if (!users.length) {
+  const mergedUsers = [];
+  if (adminState.username) {
+    mergedUsers.push({
+      username: adminState.username,
+      updated_at: adminState.updatedAt,
+      is_admin: true,
+    });
+  }
+  users.forEach((user) => {
+    if (user.username === adminState.username) {
+      return;
+    }
+    mergedUsers.push({ ...user, is_admin: false });
+  });
+  if (!mergedUsers.length) {
     usersBody.innerHTML = `<tr><td colspan="3">${escapeHtml(t("noUsersFound"))}</td></tr>`;
     return;
   }
   usersBody.innerHTML = "";
-  users.forEach((user) => {
+  mergedUsers.forEach((user) => {
+    const userLabel = user.is_admin
+      ? `${escapeHtml(user.username || "")} <span class="app-badge system-app-badge">${escapeHtml(t("adminAccount"))}</span>`
+      : escapeHtml(user.username || "");
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${escapeHtml(user.username || "")}</td>
+      <td>${userLabel}</td>
       <td>${escapeHtml(formatTurkmenTime(user.updated_at))}</td>
       <td class="actions-col"><button type="button" class="edit-user-btn">${escapeHtml(t("edit"))}</button></td>
     `;
@@ -174,7 +195,7 @@ function createUserEditModal() {
 }
 
 function refreshUserEditModalTexts() {
-  userEditModal.title.textContent = t("edit");
+  userEditModal.title.textContent = editingUsername === adminState.username ? t("editAdminAccount") : t("edit");
   userEditModal.usernameLabel.textContent = t("username");
   userEditModal.passwordLabel.textContent = t("newPassword");
   userEditModal.usernameInput.placeholder = t("username");
@@ -188,6 +209,7 @@ function openUserEditModal(user) {
   userEditModal.usernameInput.value = editingUsername;
   userEditModal.passwordInput.value = "";
   userEditModal.status.textContent = "";
+  refreshUserEditModalTexts();
   userEditModal.overlay.classList.remove("hidden");
 }
 
@@ -204,8 +226,34 @@ async function submitUserEditModal() {
     userEditModal.status.textContent = t("missingUsernamePassword");
     return;
   }
+  const isAdminEdit = editingUsername === adminState.username;
+  const confirmed = await confirmDialog(
+    isAdminEdit
+      ? t("saveAdminCredentialsConfirm", { username: nextUsername })
+      : t("saveUserChangesConfirm", { username: nextUsername }),
+    t("confirm"),
+    t("cancel"),
+  );
+  if (!confirmed) {
+    return;
+  }
   userEditModal.status.textContent = t("updatingUser", { username: editingUsername });
   try {
+    if (isAdminEdit) {
+      const payload = await adminApi("/api/v1/admin/credentials", {
+        method: "PUT",
+        body: JSON.stringify({
+          username: nextUsername,
+          password: nextPassword,
+        }),
+      });
+      adminState.username = payload.username || nextUsername;
+      adminState.updatedAt = payload.updated_at || "";
+      adminState.token = "";
+      closeUserEditModal();
+      openAdminOverlay(t("adminCredentialsUpdated"));
+      return;
+    }
     await adminApi(`/api/v1/users/${encodeURIComponent(editingUsername)}`, {
       method: "PUT",
       body: JSON.stringify({

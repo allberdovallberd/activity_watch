@@ -20,19 +20,20 @@
       </div>
     </div>
 
-    <header class="topbar">
-      <div class="topbar-left">
-        <a class="brand" href="./index.html">
-          <img src="./assets/logo.png" alt="Logo" width="200" height="48" style="height:40px; width:auto; max-width:260px;" />
-        </a>
-        <nav id="topNav" class="topnav"></nav>
-      </div>
-      <div class="topbar-actions">
-        <button id="logoutBtn" type="button" data-i18n="logout">Logout</button>
-      </div>
-    </header>
+    <div id="authContent" class="hidden">
+      <header class="topbar">
+        <div class="topbar-left">
+          <a class="brand" href="./index.html">
+            <img src="./assets/logo.png" alt="Logo" width="200" height="48" style="height:40px; width:auto; max-width:260px;" />
+          </a>
+          <nav id="topNav" class="topnav"></nav>
+        </div>
+        <div class="topbar-actions">
+          <button id="logoutBtn" type="button" data-i18n="logout">Logout</button>
+        </div>
+      </header>
 
-    <main class="layout">
+      <main class="layout">
       <section class="panel">
         <h2 data-i18n="mainCategoryTitle">Main Category (Faculty)</h2>
         <form id="mainCategoryForm" class="form-inline">
@@ -61,7 +62,8 @@
           <tbody id="subBody"></tbody>
         </table>
       </section>
-    </main>
+      </main>
+    </div>
 
     <script src="./common.js"></script>
     <script src="./categories.js"></script>

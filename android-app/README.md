@@ -1,40 +1,93 @@
-# Android App (Flutter)
+# Android App
 
-## Behavior
+This app collects usage data on Android, stores it locally, and syncs it to the backend.
 
-- Permission gate: app is blocked until Usage Access is granted.
-- Device link is manual:
-  - main screen shows red `Device is not set!` if empty
-  - tap `Set now`, enter `device_id`, and app validates with backend
-  - on success, green `All is set` is shown
-  - each ID can bind to one physical installation at a time
-- Auto collect/sync:
-  - runs automatically
-  - stores locally offline
-  - syncs when network is available
+## Requirements
 
-- Settings (top-right icon):
-  - Display name
-  - Reset config
+- Flutter SDK
+- Android SDK
+- `adb` for manual install/debug
+- running backend reachable from the tablet
+
+## Important Behavior
+
+- Usage Access permission is required.
+- Device linking is manual.
+- Data is stored locally first and synced when the backend is reachable.
+- The backend URL is editable from app settings.
+- The latest saved backend URL is the only active sync target.
+- There is no fallback and no automatic switch to another server.
+
+Main code paths:
+
+- default backend value: `android-app/lib/src/app_config.dart`
+- settings persistence: `android-app/lib/src/settings_store.dart`
+- sync logic: `android-app/lib/src/sync_service.dart`
 
 ## Build
 
 ```bash
 flutter pub get
-flutter build apk --debug
+flutter build apk --release
 ```
 
-## Necessary Steps
+Release APK output:
 
-1. Create category hierarchy and device in web app:
-   - Main category (Faculty)
-   - Sub category (Year intake)
-   - Device ID
-2. Install APK on tablet.
-3. Open app and grant Usage Access.
-4. Tap `Set now`, enter exact Device ID from web app.
-5. Keep tablet on same network as backend at least once to bind Device ID.
-6. Verify in web app that:
-   - device appears as active
-   - `Last Seen` updates
-   - usage data appears after some activity
+- `build/app/outputs/flutter-apk/app-release.apk`
+
+## Versioning Before Update
+
+If you want Android or MDM to recognize a new APK as an update, increase the version in:
+
+- `android-app/pubspec.yaml`
+
+Example:
+
+```yaml
+version: 1.0.1+2
+```
+
+Rules:
+
+- the value after `+` must always increase
+- the visible version on the left can be changed as needed
+
+## Install
+
+Replace existing install:
+
+```bash
+adb devices
+adb install -r build/app/outputs/flutter-apk/app-release.apk
+```
+
+If replace fails because of an older conflicting install:
+
+```bash
+adb uninstall com.example.usage_collector
+adb install build/app/outputs/flutter-apk/app-release.apk
+```
+
+## First Device Setup
+
+1. Install the APK.
+2. Open the app.
+3. Grant Usage Access.
+4. Open settings and confirm the backend URL.
+5. Enter the correct `device_id` from the web app.
+6. Let the app reach the backend once to bind and start syncing.
+
+## Backend URL Behavior
+
+Current behavior:
+
+- `AppConfig.defaultBackendBaseUrl` is only the first-run default
+- after that, the saved settings value is used
+- changing the backend URL in settings replaces the previous value
+- you can edit it as many times as needed
+
+## Notes
+
+- If background sync seems wrong, check the saved backend URL on the device first.
+- If you distribute a rebuilt APK through MDM, bump the version before publishing it.
+- If the app is installed on a managed device, device-owner or policy behavior depends on that device's MDM setup.
