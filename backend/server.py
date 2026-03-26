@@ -9,8 +9,8 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
-import psycopg
-from psycopg.rows import dict_row
+import db_driver as psycopg
+from db_driver import dict_row
 
 from admin_actions import (
     ensure_admin_credentials,

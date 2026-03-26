@@ -3,7 +3,7 @@ import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable
 
-import psycopg
+import db_driver as psycopg
 
 
 WriteJson = Callable[[int, dict[str, Any]], None]
