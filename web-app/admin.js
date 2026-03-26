@@ -17,12 +17,22 @@ const logoutBtn = document.getElementById("logoutBtn");
 
 const adminState = {
   token: "",
-  username: "",
-  updatedAt: "",
 };
 
 const userEditModal = createUserEditModal();
 let editingUsername = "";
+
+if (logoutBtn) {
+  logoutBtn.dataset.bound = "1";
+  logoutBtn.addEventListener("click", async () => {
+    const ok = await confirmDialog(t("logOutConfirm"), t("confirm"), t("cancel"));
+    if (!ok) {
+      return;
+    }
+    adminState.token = "";
+    openAdminOverlay();
+  });
+}
 
 initSharedLayout("admin");
 backendUrlInput.value = appState.backendUrl;
@@ -49,8 +59,6 @@ adminForm.addEventListener("submit", async (event) => {
       }),
     });
     adminState.token = payload.token;
-    adminState.username = payload.username || adminUsernameInput.value.trim();
-    adminState.updatedAt = payload.updated_at || "";
     adminPasswordInput.value = "";
     adminStatus.textContent = "";
     adminOverlay.classList.add("hidden");
@@ -89,13 +97,6 @@ createUserForm.addEventListener("submit", async (event) => {
   }
 });
 
-window.handleAdminLogout = () => {
-  adminState.token = "";
-  adminState.username = "";
-  adminState.updatedAt = "";
-  openAdminOverlay();
-};
-
 function openAdminOverlay(statusMessage = "") {
   adminStatus.textContent = statusMessage;
   adminPasswordInput.value = "";
@@ -122,32 +123,15 @@ async function loadUsers() {
 }
 
 function renderUsers(users) {
-  const mergedUsers = [];
-  if (adminState.username) {
-    mergedUsers.push({
-      username: adminState.username,
-      updated_at: adminState.updatedAt,
-      is_admin: true,
-    });
-  }
-  users.forEach((user) => {
-    if (user.username === adminState.username) {
-      return;
-    }
-    mergedUsers.push({ ...user, is_admin: false });
-  });
-  if (!mergedUsers.length) {
+  if (!users.length) {
     usersBody.innerHTML = `<tr><td colspan="3">${escapeHtml(t("noUsersFound"))}</td></tr>`;
     return;
   }
   usersBody.innerHTML = "";
-  mergedUsers.forEach((user) => {
-    const userLabel = user.is_admin
-      ? `${escapeHtml(user.username || "")} <span class="app-badge system-app-badge">${escapeHtml(t("adminAccount"))}</span>`
-      : escapeHtml(user.username || "");
+  users.forEach((user) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${userLabel}</td>
+      <td>${escapeHtml(user.username || "")}</td>
       <td>${escapeHtml(formatTurkmenTime(user.updated_at))}</td>
       <td class="actions-col"><button type="button" class="edit-user-btn">${escapeHtml(t("edit"))}</button></td>
     `;
@@ -195,7 +179,7 @@ function createUserEditModal() {
 }
 
 function refreshUserEditModalTexts() {
-  userEditModal.title.textContent = editingUsername === adminState.username ? t("editAdminAccount") : t("edit");
+  userEditModal.title.textContent = t("edit");
   userEditModal.usernameLabel.textContent = t("username");
   userEditModal.passwordLabel.textContent = t("newPassword");
   userEditModal.usernameInput.placeholder = t("username");
@@ -226,11 +210,8 @@ async function submitUserEditModal() {
     userEditModal.status.textContent = t("missingUsernamePassword");
     return;
   }
-  const isAdminEdit = editingUsername === adminState.username;
   const confirmed = await confirmDialog(
-    isAdminEdit
-      ? t("saveAdminCredentialsConfirm", { username: nextUsername })
-      : t("saveUserChangesConfirm", { username: nextUsername }),
+    t("saveUserChangesConfirm", { username: nextUsername }),
     t("confirm"),
     t("cancel"),
   );
@@ -239,21 +220,6 @@ async function submitUserEditModal() {
   }
   userEditModal.status.textContent = t("updatingUser", { username: editingUsername });
   try {
-    if (isAdminEdit) {
-      const payload = await adminApi("/api/v1/admin/credentials", {
-        method: "PUT",
-        body: JSON.stringify({
-          username: nextUsername,
-          password: nextPassword,
-        }),
-      });
-      adminState.username = payload.username || nextUsername;
-      adminState.updatedAt = payload.updated_at || "";
-      adminState.token = "";
-      closeUserEditModal();
-      openAdminOverlay(t("adminCredentialsUpdated"));
-      return;
-    }
     await adminApi(`/api/v1/users/${encodeURIComponent(editingUsername)}`, {
       method: "PUT",
       body: JSON.stringify({

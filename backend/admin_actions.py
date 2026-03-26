@@ -86,7 +86,7 @@ def disable_bootstrap(conn: psycopg.Connection, *, utc_now_iso: UtcNowIso) -> No
 
 def get_admin_credentials(conn: psycopg.Connection) -> dict[str, Any] | None:
     return conn.execute(
-        "SELECT username, password_hash, salt, updated_at FROM admin_credentials LIMIT 1"
+        "SELECT username, password_hash, salt FROM admin_credentials LIMIT 1"
     ).fetchone()
 
 
@@ -203,16 +203,7 @@ def handle_admin_login(
         conn.commit()
     finally:
         conn.close()
-    return write_json(
-        200,
-        {
-            "ok": True,
-            "token": token,
-            "expires_at": expires_at.isoformat(),
-            "username": admin["username"],
-            "updated_at": admin.get("updated_at"),
-        },
-    )
+    return write_json(200, {"ok": True, "token": token, "expires_at": expires_at.isoformat()})
 
 
 def handle_user_login(
@@ -277,18 +268,10 @@ def handle_admin_set_credentials(
             if not bootstrap_allowed(conn):
                 return write_json(401, {"error": "Unauthorized"})
         set_admin_credentials(conn, username, password, utc_now_iso=utc_now_iso)
-        admin = get_admin_credentials(conn)
         conn.execute("DELETE FROM admin_tokens")
         disable_bootstrap(conn, utc_now_iso=utc_now_iso)
         conn.commit()
-        return write_json(
-            200,
-            {
-                "ok": True,
-                "username": admin["username"] if admin else username,
-                "updated_at": admin.get("updated_at") if admin else utc_now_iso(),
-            },
-        )
+        return write_json(200, {"ok": True})
     finally:
         conn.close()
 

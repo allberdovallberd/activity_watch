@@ -173,11 +173,7 @@ const UI_STRINGS = {
     passwordUpdatedForUser: "{username} üçin açar söz täzelendi.",
     passwordUpdateFailed: "Açar söz täzelenmedi: {message}",
     adminAuthenticationRequired: "Admin tassyklamasy zerur",
-    adminAccount: "admin",
-    editAdminAccount: "Admin hasabyny üýtget",
     saveUserChangesConfirm: "{username} üçin täze açar söz ýatda saklansynmy?",
-    saveAdminCredentialsConfirm: "Admin maglumatlary ýatda saklansynmy?",
-    adminCredentialsUpdated: "Admin maglumatlary täzelendi. Täze maglumatlar bilen gaýtadan giriň.",
   },
   en: {
     appName: "Ulanyş",
@@ -341,11 +337,7 @@ const UI_STRINGS = {
     passwordUpdatedForUser: "Password updated for {username}.",
     passwordUpdateFailed: "Password update failed: {message}",
     adminAuthenticationRequired: "Admin authentication required",
-    adminAccount: "admin",
-    editAdminAccount: "Edit Admin Account",
     saveUserChangesConfirm: "Save the new password for {username}?",
-    saveAdminCredentialsConfirm: "Save the new admin credentials?",
-    adminCredentialsUpdated: "Admin credentials updated. Log in again with the new credentials.",
   },
   ru: {
     appName: "Ulanyş",
@@ -509,11 +501,7 @@ const UI_STRINGS = {
     passwordUpdatedForUser: "Пароль обновлен для {username}.",
     passwordUpdateFailed: "Ошибка обновления пароля: {message}",
     adminAuthenticationRequired: "Требуется аутентификация администратора",
-    adminAccount: "админ",
-    editAdminAccount: "Изменить учетную запись администратора",
     saveUserChangesConfirm: "Сохранить новый пароль для {username}?",
-    saveAdminCredentialsConfirm: "Сохранить новые данные администратора?",
-    adminCredentialsUpdated: "Данные администратора обновлены. Войдите снова с новым паролем.",
   },
 };
 
@@ -734,10 +722,6 @@ function initSharedLayout(activePage) {
     logoutBtn.addEventListener("click", async () => {
       const ok = await confirmDialog(t("logOutConfirm"), t("confirm"), t("cancel"));
       if (!ok) {
-        return;
-      }
-      if (logoutBtn.dataset.logoutScope === "admin" && typeof window.handleAdminLogout === "function") {
-        window.handleAdminLogout();
         return;
       }
       appState.adminToken = "";
