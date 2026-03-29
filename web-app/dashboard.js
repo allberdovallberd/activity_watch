@@ -35,6 +35,7 @@ const detailsStatus = document.getElementById("detailsStatus");
 const appsBody = document.getElementById("appsBody");
 const appsCount = document.getElementById("appsCount");
 const includeSystemApps = document.getElementById("includeSystemApps");
+const appSearchInput = document.getElementById("appSearchInput");
 const dailyUsageBody = document.getElementById("dailyUsageBody");
 const screenTimeValue = document.getElementById("screenTimeValue");
 const screenTimeRange = document.getElementById("screenTimeRange");
@@ -91,6 +92,11 @@ if (includeSystemApps) {
     if (state.selectedDeviceId) {
       loadSelectedDeviceDetails({ silent: true, preserveScroll: true });
     }
+  });
+}
+if (appSearchInput) {
+  appSearchInput.addEventListener("input", () => {
+    renderApps(state.lastApps || []);
   });
 }
 if (selectAllDashboardDevices) {
@@ -635,12 +641,20 @@ function isSystemApp(app) {
 
 function getFilteredApps(apps) {
   const showSystem = includeSystemApps ? includeSystemApps.checked : false;
+  const search = String(appSearchInput?.value || "").trim().toLowerCase();
   return (apps || []).filter((app) => {
     if (app.is_tracking) {
       return false;
     }
     if (!showSystem && isSystemApp(app)) {
       return false;
+    }
+    if (search) {
+      const appName = String(app.app_name || "").toLowerCase();
+      const packageName = String(app.package_name || "").toLowerCase();
+      if (!appName.includes(search) && !packageName.includes(search)) {
+        return false;
+      }
     }
     return true;
   });
