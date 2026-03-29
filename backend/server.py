@@ -1701,7 +1701,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                     at.device_id,
                     at.package_name,
                     COALESCE(am.app_name, at.package_name) AS app_name,
-                    COALESCE(am.is_system, TRUE) AS raw_is_system,
+                    COALESCE(am.is_system, FALSE) AS raw_is_system,
                     COALESCE(am.is_tracking, FALSE) AS raw_is_tracking,
                     at.total_foreground_ms
                 FROM app_totals at
@@ -1723,7 +1723,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                 is_system = _classify_is_system(
                     row.get("package_name", ""),
                     row.get("app_name", ""),
-                    row.get("raw_is_system", True),
+                    row.get("raw_is_system", False),
                 )
                 if is_system:
                     continue
@@ -2149,7 +2149,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                     p.package_name,
                     COALESCE(am.app_name, p.package_name) AS app_name,
                     am.icon_base64,
-                    COALESCE(am.is_system, TRUE) AS is_system,
+                    COALESCE(am.is_system, FALSE) AS is_system,
                     COALESCE(am.is_tracking, FALSE) AS is_tracking,
                     COALESCE(ROUND(SUM(uw.weighted_ms)), 0)::bigint AS total_foreground_ms,
                     0::bigint AS total_data_bytes
@@ -2180,7 +2180,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                 item["is_system"] = _classify_is_system(
                     item.get("package_name", ""),
                     item.get("app_name", ""),
-                    item.get("is_system", True),
+                    item.get("is_system", False),
                 )
                 apps_payload.append(item)
             return self._write_json(
@@ -2265,7 +2265,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                       SELECT
                           u.package_name,
                           COALESCE(am.app_name, u.package_name) AS app_name,
-                          COALESCE(am.is_system, TRUE) AS is_system,
+                          COALESCE(am.is_system, FALSE) AS is_system,
                           LEAST(
                           u.foreground_ms,
                               GREATEST(EXTRACT(EPOCH FROM (u.end_time - u.start_time)) * 1000.0, 0)
@@ -2351,7 +2351,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                     ordered_days.append(day_key)
                 package_name = row.get("package_name", "") or ""
                 app_name = row.get("app_name", "") or package_name
-                is_system = _classify_is_system(package_name, app_name, row.get("is_system", True))
+                is_system = _classify_is_system(package_name, app_name, row.get("is_system", False))
                 if not include_system and is_system:
                     continue
                 total_ms = int(row.get("total_foreground_ms") or 0)
